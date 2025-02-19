@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"></script>
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+         }
+        
+        .wrap-container{
+             height: 100vh;
+            background-image: url("/image.jpg");
+            background-size: cover;
+            background-repeat: no-repeat;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        #timerContainer{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size:  90px;
+            color: cornsilk;
+        }
+        #tasks{
+            position: absolute;
+            right: 10px;
+            bottom: 50px;   
+        }
+        .hidden{
+            visibility: hidden;
+        }
+
+        #content{
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        #content div{
+            display: flex;
+            align-items: center;
+        }
+
+        #content div span{
+            flex:1;
+            white-space: nowrap; /* 텍스트가 한 줄에 표시되도록 */
+            overflow: hidden; /* 넘치는 부분 숨기기 */
+            text-overflow: ellipsis; /* 넘치는 부분을 ...으로 표시 */
+
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="wrap-container">
+        <div id="timerContainer"></div>
+    
+
+        <div id="tasks" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+            <div style="
+                display:flex; 
+                flex-direction: column; 
+                min-height: 100px;
+                width: 200px;
+                 background-color: white; 
+                 border-radius: 8px;" >
+                    <div>Today</div>
+                    <div id="content" style=" padding: 8px;"></div>
+                    <input id="todoInput" type="input" placeholder="New Task">
+            </div>
+            <div>
+                <span style="color:white">Tasks</span>
+            </div>
+            <div>
+                <input id="tasksButton" type="checkbox" style="width: 18px; height: 18px;">
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
+<script>    
+
+    let todos = [];
+
+    $(document).ready(()=>{
+        todos =JSON.parse(localStorage.getItem("todos"));
+        if(!todos){
+            todos = [];
+        }
+
+    })
+   
+
+    //현재 시간 표시
+    const timerContainer = document.getElementById("timerContainer");
+    setInterval(() => {
+        const nowTime = new Date();
+
+        const hour = nowTime.getHours();
+        const minutes = nowTime.getMinutes();
+
+        const hourFormat = nowTime.getHours() < 10 ? `0${hour}` :hour;
+        const minutesFormat = nowTime.getMinutes() < 10 ? `0${minutes}` :minutes;
+
+        timerContainer.innerHTML = hourFormat + " : " + minutesFormat
+
+    }, 1000);
+
+    $("tasksButton").click(()=>{
+
+    })
+
+    $("#todoInput").on("keydown", (event)=>{
+        if (event.key  === "Enter") {  
+            if(!event.target.value) return;
+            // 또는 event.keyCode === 13
+            // 엔터키가 눌렸을 때 실행할 코드
+            console.log("Enter key was pressed!");
+            //저장
+            
+            const newId = Date.now();
+            addTodo(newId, event.target.value);
+            makeHtmlTodo( newId,event.target.value);
+
+            event.target.value = "";
+        }
+    })
+
+    function addTodo(id,content){
+        const newTodo = {
+            id : Date.now(),
+            content: content,
+            checked:false,
+        }
+        todos.push(newTodo);
+        saveTodos();
+    }
+    function updateTodo(id,content){
+        const findTodo = todos.find((item)=>item.id ==id);
+        findTodo.content = content;
+        saveTodos();
+    }
+    function deleteTodo(){
+        const filteredTodo = todos.filter((item) => item.id != id)
+        todos = filteredTodo;
+        saveTodos();
+    }
+    function getListAll(){
+        todos.forEach((item)=>{
+            makeHtmlTodo(item.id, item.content, item.checked);
+        })
+    }
+    function checkTodos(id,checked){
+        const findTodo = todos.find((item) =>item.id == id);
+        findTodo.checked = findTodo;
+        saveTodos();
+    }
+    function saveTodos(){
+        localStorage.setItem("todos",JSON.stringify(todos));
+    }
+
+    function makeHtmlTodo(id,inputValue,checked){
+        const content = document.getElementById("content");
+        const containerDiv = document.createElement("div");
+        const checkBox = document.createElement("input");
+        const span = document.createElement("span");
+        const button = document.createElement("button");
+
+        containerDiv.setAttribute("id",id);
+
+        checkBox.type = "checkbox";
+        checkBox.checked = checked;
+
+        span.innerHTML = inputValue;
+
+        button.innerHTML = "..."
+        button.classList.add("hidden");
+        button.addEventListener("click", ()=>{
+
+        })
+        containerDiv.addEventListener("mouseover",(event)=>{
+            button.classList.remove("hidden");
+        })
+        
+        containerDiv.addEventListener("mouseout",(event)=>{
+            button.classList.add("hidden");
+        })
+
+        checkBox.addEventListener("click",(event)=>{
+            // 완료여부
+        })
+
+        containerDiv.appendChild(checkBox);
+        containerDiv.appendChild(span);
+        containerDiv.appendChild(button);
+        content.appendChild(containerDiv);
+
+    }
+
+</script>
