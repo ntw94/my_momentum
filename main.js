@@ -30,21 +30,40 @@ const meals = {
 $(document).ready(()=>{
     todos =JSON.parse(localStorage.getItem("todos"));
     username  = JSON.parse(localStorage.getItem("username"));
+    
+    const userInput = document.querySelector("#userInput");
 
-    if(!todos){
-        todos = [];
+    if(!todos) todos = [];
+    if(!username){
+        username = "";
     }
-
-    if(!username) username = "";
-
     getListAll();
 
-    const userInput = document.querySelector("#userInput");
+    if(username == ""){
+        userInput.classList.remove("inputHide");
+    }else{
+        userInput.classList.add("inputHide");
+    }
+    
+    userInput.value = username;
     userInput.addEventListener("keydown", (event) => {
         if (event.key === "Enter") {
             saveUserName(event.target.value);
+            event.target.classList.add("inputHide");
         }
     });
+
+    userInput.addEventListener("focus", (event) => {
+        event.target.classList.remove("inputHide");
+    });
+
+    userInput.addEventListener("blur", (event) => {
+        event.target.classList.add("inputHide");
+    });
+
+    userInput.addEventListener("input",()=>{
+        saveUserName(event.target.value);
+    })
 
 })
 
