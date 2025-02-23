@@ -365,7 +365,7 @@ getQuote();
 async function getWeatherInfo(){
     try{
         const location = await getLocation();
-        const url = `https://api.openweathermap.org/data/2.5/weather?lat=${location.lat}&lon=${location.lon}&appid=eb7f3f8fd351523f588ff15811332ca3&units=metric`;
+        const url = `https://api.openweathermap.org/data/2.5/weather?lat=${location.lat}&lon=${location.lon}&appid=&units=metric`;
         const response  = await fetch(url);
         const data = await response.json();
     
